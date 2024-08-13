@@ -62,7 +62,7 @@ public class EnemyAI : MonoBehaviour
         PlayerDetection();
 
         Movement();
-        Attack();
+        //Attack();
     }
 
     #region Player Detection
@@ -77,10 +77,13 @@ public class EnemyAI : MonoBehaviour
     {
         if (!isPlayerDetected)
         {
+            float distance = Vector3.Distance(transform.position, playerTarget.position);
+            float detectionSpeed = distance / references.fov.GetViewRadius();
+
             if (references.fov.CanSeePlayer())
-                detectionTimeCounter -= Time.deltaTime;
+                detectionTimeCounter -= Time.deltaTime * detectionSpeed;
             else
-                detectionTimeCounter += Time.deltaTime;
+                detectionTimeCounter += Time.deltaTime * detectionSpeed;
         }
 
         detectionTimeCounter = Mathf.Clamp(detectionTimeCounter, 0, detectionTime);
@@ -93,9 +96,12 @@ public class EnemyAI : MonoBehaviour
     {
         if (isPlayerDetected)
         {
+            float distance = Vector3.Distance(transform.position, playerTarget.position);
+            float forgetSpeed = distance / references.fov.GetViewRadius();
+
             if (!references.fov.CanSeePlayer())
             {
-                forgetTimeCounter -= Time.deltaTime;
+                forgetTimeCounter -= Time.deltaTime * forgetSpeed;
             }
             else
             {
